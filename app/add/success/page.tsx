@@ -1,11 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiCheckCircle, FiEdit3, FiFolder, FiFileText } from "react-icons/fi";
+import { FiCheckCircle } from "react-icons/fi";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { div } from "framer-motion/client";
-
 export default function SuccessPage() {
     const searchParams = useSearchParams();
 
@@ -31,7 +29,7 @@ export default function SuccessPage() {
                     ₹{amount} logged!
                 </h2>
                 <h4 className="text-sm font-semibold text-slate-600 p-4">
-                   NOTE:  {note}
+                    NOTE:  {note}
                 </h4>
                 <p className="text-slate-500 text-sm mt-1">
                     Transaction Successfully Recorded

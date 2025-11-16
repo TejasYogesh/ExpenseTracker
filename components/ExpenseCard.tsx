@@ -8,9 +8,9 @@ import { Expense } from "@/types/expense";
 
  // ensure same type used everywhere
 
-interface ExpenseCardProps {
-  expense: Expense;
-}
+// interface ExpenseCardProps {
+//   expense: Expense;
+// }
 
 export default function ExpenseCard({ expense }: { expense: Expense }) {
   const icons: Record<string, ReactNode> = {
