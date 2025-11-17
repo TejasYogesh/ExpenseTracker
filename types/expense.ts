@@ -5,6 +5,7 @@ export interface Expense {
   note?: string | null;            // ✅ FIXED HERE
   location_lat?: number | null;
   location_lng?: number | null;
+  voice_note_url?: string | null;
   created_at: string;
 }
 

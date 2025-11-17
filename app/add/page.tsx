@@ -5,12 +5,16 @@ import TagSelector from "../../components/TagSelector";
 import { supabase } from "@/lib/supabase";
 import { FiPlusCircle } from "react-icons/fi";
 import { motion } from "framer-motion";
+import VoiceRecorder from "../../components/VoiceRecorder";
+
 
 export default function AddPage() {
     const [amount, setAmount] = useState("");
     const [note, setNote] = useState("");
     const [tag, setTag] = useState("");
     const [location, setLocation] = useState({ lat: null as number | null, lng: null as number | null });
+    const [voiceNoteFile, setVoiceNoteFile] = useState<File | null>(null);
+
 
     useEffect(() => {
         if (!navigator.geolocation) return;
@@ -25,24 +29,47 @@ export default function AddPage() {
             return;
         }
 
+        let voiceURL = null;
+
+        if (voiceNoteFile) {
+            const filePath = `voice-notes/${Date.now()}-${voiceNoteFile.name}`;
+
+            const { data, error: uploadError } = await supabase.storage
+                .from("expense-voice-notes")
+                .upload(filePath, voiceNoteFile);
+
+            if (uploadError) {
+                console.error(uploadError);
+                alert("Failed to upload voice note");
+            } else {
+                const { data: publicURL } = supabase.storage
+                    .from("expense-voice-notes")
+                    .getPublicUrl(filePath);
+
+                voiceURL = publicURL.publicUrl;
+            }
+        }
+
         const payload = {
             amount: Number(amount),
             note: note || null,
             tag,
             location_lat: location.lat ?? null,
             location_lng: location.lng ?? null,
+            voice_note_url: voiceURL,
         };
 
         const { error } = await supabase.from("expensesfinal").insert(payload);
 
         if (error) {
-            alert(error.message);
+            console.error(error);
+            alert("Insert failed: " + error.message);
             return;
         }
 
-        // Redirect to SUCCESS PAGE
-        window.location.href = `/add/success?amount=${amount}&note=${note}`;
+        window.location.href = `/add/success?amount=${amount}`;
     }
+
 
 
     return (
@@ -93,6 +120,11 @@ export default function AddPage() {
                         <div className="mt-2">
                             <TagSelector selected={tag} onSelect={setTag} />
                         </div>
+                    </div>
+
+                    <div className="my-4">
+                        <VoiceRecorder onRecorded={(file) => setVoiceNoteFile(file)} />
+
                     </div>
 
                     {/* Location preview */}
